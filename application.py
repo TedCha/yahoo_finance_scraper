@@ -1,6 +1,5 @@
 import requests
 from lxml import html
-import csv
 import pandas as pd
 import math
 
@@ -36,9 +35,11 @@ class scrape_company_data():
 
         summary_data_str.insert(0, company_name_str)
 
-        summary_data_df = pd.DataFrame([summary_data_str], columns=summary_data_header_str)
+        df_i = pd.DataFrame([summary_data_str], columns=summary_data_header_str)
 
-        print(summary_data_df)
+        summary_data_df = df_i.transpose()
+
+        return summary_data_df
 
     def scrape_profile_data(self):
         profile_url = f'https://finance.yahoo.com/quote/{self.stock}/profile'
@@ -53,9 +54,11 @@ class scrape_company_data():
 
         profile_data_str = [profile.text_content() for profile in profile_data]
 
-        profile_data_df = pd.DataFrame([profile_data_str[1::2]], columns=profile_data_str[0::2])
+        df_i = pd.DataFrame([profile_data_str[0::2], profile_data_str[1::2]])
 
-        print(profile_data_df)
+        profile_data_df = df_i.transpose()
+
+        return profile_data_df
     
     def scrape_income_statement_data(self):
         income_statement_url = f'https://finance.yahoo.com/quote/{self.stock}/financials'
@@ -78,7 +81,7 @@ class scrape_company_data():
 
         income_statement_df = pd.DataFrame(data_array, columns=header_row)
 
-        print(income_statement_df)
+        return income_statement_df
 
     
 
