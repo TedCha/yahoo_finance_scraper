@@ -1,10 +1,10 @@
 import requests
-from bs4 import BeautifulSoup
+from lxml import html
 import csv
 import pandas as pd
-import time
+import math
 
-class scrape_summary_data():
+class scrape_company_data():
 
     def __init__(self, stock):
         self.stock = stock
@@ -16,34 +16,29 @@ class scrape_summary_data():
 
         response = requests.get(summary_url, params=payload)
 
-        data = response.text
+        data = html.fromstring(response.text)
 
-        soup = BeautifulSoup(data, 'lxml')
+        company_name = data.xpath('//*[@class="Mt(15px)"]/div[1]/div[1]/h1')
 
-        company_name = soup.select("#div.D(ib)")
+        summary_data_headers = data.xpath('//*[@id="quote-summary"]/div/table/tbody/tr/td[1]')
 
-        summary_data = soup.select("#quote-summary tr")
+        summary_data = data.xpath('//*[@id="quote-summary"]/div/table/tbody/tr/td[2]')
 
-        company_summary_dict = dict()
-        
-        company_summary_dict['company'] = company_name
+        company_name_list = [name.text_content() for name in company_name]
 
-        company_summary_dict['stock'] = self.stock
+        company_name_str = company_name_list[0]
 
-        for i in range(len(summary_data)): 
-            rows = [row.text for row in summary_data[i]]
-            key = rows[0]
-            value = rows[1]
+        summary_data_header_str  = [header.text_content() for header in summary_data_headers]
 
-            # Add a value to our class_dict dictionary
-            company_summary_dict[str(key)] = str(value)
-        
-        return company_summary_dict
+        summary_data_str  = [data.text_content() for data in summary_data]
 
-class scrape_profile_data():
+        summary_data_header_str.insert(0, 'Company')
 
-    def __init__(self, stock):
-        self.stock = stock
+        summary_data_str.insert(0, company_name_str)
+
+        summary_data_df = pd.DataFrame([summary_data_str], columns=summary_data_header_str)
+
+        print(summary_data_df)
 
     def scrape_profile_data(self):
         profile_url = f'https://finance.yahoo.com/quote/{self.stock}/profile'
@@ -52,52 +47,39 @@ class scrape_profile_data():
 
         response = requests.get(profile_url, params=payload)
 
-        data = response.text
+        data = html.fromstring(response.text)
 
-        soup = BeautifulSoup(data, 'lxml')
+        profile_data = data.xpath('//*[@class="D(ib) Va(t)"]/span')
 
-        profile_data = soup.select('#asset-profile-container p')
+        profile_data_str = [profile.text_content() for profile in profile_data]
 
-        company_profile_dict = dict()
+        profile_data_df = pd.DataFrame([profile_data_str[1::2]], columns=profile_data_str[0::2])
 
-        for i in range(len(profile_data)): 
-            rows = [row.text for row in profile_data[i]]
-            key = rows[0]
-            value = rows[1]
-
-            # Add a value to our class_dict dictionary
-            company_profile_dict[str(key)] = str(value)
-        
-        return company_profile_dict
-
-class scrape_financials_data():
-
-    def __init__(self, stock):
-        self.stock = stock
-
-    def scrape_financials_data(self):
-        financials_url = f'https://finance.yahoo.com/quote/{self.stock}/financials'
+        print(profile_data_df)
+    
+    def scrape_income_statement_data(self):
+        income_statement_url = f'https://finance.yahoo.com/quote/{self.stock}/financials'
 
         payload = {'p' : self.stock}
 
-        response = requests.get(financials_url, params=payload)
+        response = requests.get(income_statement_url, params=payload)
 
-        data = response.text
+        data = html.fromstring(response.text)
 
-        soup = BeautifulSoup(data, 'lxml')
+        income_statement_headers = data.xpath('//*[@class="D(tbhg)"]/div[1]/div')
 
-        financials_data = soup.select('div.Pos(r)')
+        income_statement_rows = data.xpath('//*[@data-test="fin-row"]/div[1]/div')
 
-        company_financials_dict = dict()
+        header_row = [header.text_content() for header in income_statement_headers]
 
-        for i in range(len(financials_data)): 
-            rows = [row.text for row in financials_data[i]]
-            key = rows[0]
-            value = rows[1]
+        data_uf = [data.text_content() for data in income_statement_rows]
 
-            # Add a value to our class_dict dictionary
-            company_financials_dict[str(key)] = str(value)
-        
-        return company_financials_dict
+        data_array = [data_uf[6*i:6*i+6] for i in range(0,math.ceil(len(data_uf)/6))]
+
+        income_statement_df = pd.DataFrame(data_array, columns=header_row)
+
+        print(income_statement_df)
+
+    
 
         
