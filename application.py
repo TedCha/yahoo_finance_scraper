@@ -4,16 +4,23 @@ import pandas as pd
 import math
 
 class scrape_company_data():
+    
 
-    def __init__(self, stock):
+    # --- Initialize Instance Variables --- #
+
+    def __init__(self, stock, user_agent):
         self.stock = stock
+        self.user_agent = user_agent
+
+
+    # --- Scrape Company Summary Data --- #
 
     def scrape_summary_data(self):
         summary_url = f'https://finance.yahoo.com/quote/{self.stock}'
 
         payload = {'p' : self.stock}
 
-        response = requests.get(summary_url, params=payload)
+        response = requests.get(summary_url, params=payload, headers=self.user_agent)
 
         data = html.fromstring(response.text)
 
@@ -43,12 +50,15 @@ class scrape_company_data():
 
         return summary_data_df
 
+
+    # --- Scrape Company Profile Data --- #
+
     def scrape_profile_data(self):
         profile_url = f'https://finance.yahoo.com/quote/{self.stock}/profile'
 
         payload = {'p' : self.stock}
 
-        response = requests.get(profile_url, params=payload)
+        response = requests.get(profile_url, params=payload, headers=self.user_agent)
 
         data = html.fromstring(response.text)
 
@@ -63,13 +73,16 @@ class scrape_company_data():
         print('Company Profile Data Scraped')
 
         return profile_data_df
+
+    
+    # --- Scrape Company Income Statement Data --- #
     
     def scrape_income_statement_data(self):
         income_statement_url = f'https://finance.yahoo.com/quote/{self.stock}/financials'
 
         payload = {'p' : self.stock}
 
-        response = requests.get(income_statement_url, params=payload)
+        response = requests.get(income_statement_url, params=payload, headers=self.user_agent)
 
         data = html.fromstring(response.text)
 
@@ -89,12 +102,15 @@ class scrape_company_data():
 
         return income_statement_df
 
+    
+    # --- Scrape Company Balance Sheet Data --- #
+
     def scrape_balance_sheet_data(self):
         balance_sheet_url = f'https://finance.yahoo.com/quote/{self.stock}/balance-sheet'
 
         payload = {'p' : self.stock}
 
-        response = requests.get(balance_sheet_url, params=payload)
+        response = requests.get(balance_sheet_url, params=payload, headers=self.user_agent)
 
         data = html.fromstring(response.text)
 
@@ -113,13 +129,16 @@ class scrape_company_data():
         print('Balance Sheet Data Scraped')
 
         return balance_sheet_df
+
+    
+    # --- Scrape Company Cash Flow Data --- #
     
     def scrape_cash_flow_data(self):
         balance_sheet_url = f'https://finance.yahoo.com/quote/{self.stock}/cash-flow'
 
         payload = {'p' : self.stock}
 
-        response = requests.get(balance_sheet_url, params=payload)
+        response = requests.get(balance_sheet_url, params=payload, headers=self.user_agent)
 
         data = html.fromstring(response.text)
 

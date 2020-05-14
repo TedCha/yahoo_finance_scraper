@@ -6,11 +6,17 @@ from application import scrape_company_data
 
 def main():
 
-    # --- Call scraping functions and perform web scrape. --- #
+    # --- Input and Setup --- #
 
-    stock = str(input('Stock Symbol: '))
+    stock = str(input('Ticker Symbol: '))
 
-    run = scrape_company_data(stock)
+    headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:77.0) Gecko/20100101 Firefox/77.0'}
+
+    # --- Class Instance Creation --- #
+
+    run = scrape_company_data(stock, headers)
+
+    # --- Scrape Methods Execution --- #
 
     summary_data = run.scrape_summary_data()
 
@@ -22,7 +28,7 @@ def main():
 
     cash_flow = run.scrape_cash_flow_data()
 
-    # --- Write scraped data to xlsx file. --- #
+    # --- Record Data to XLSX --- #
 
     file_name = './output/' + f'{stock}_financial_report.xlsx'
 
@@ -37,6 +43,8 @@ def main():
     balance_sheet.to_excel(writer, sheet_name='Balance_Sheet', index=False)
 
     cash_flow.to_excel(writer, sheet_name='Cash_Flow', index=False)
+
+    # --- Save Data --- #
 
     writer.save()
 
