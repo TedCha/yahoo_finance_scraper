@@ -1,13 +1,9 @@
 # yahoo_finance_data_scrape
-Python application that allows you to pass in multiple company stock symbols and receive a CSV output of all the data scraped alongside of some analytics.
-
-# WIP
-
-This project is a work in progress.
+Python application that allows you to pass a stock symbol and receive an XLSX output of all the data scraped.
 
 The data is scraped from:
 
-[USF Registrar Schedule Search](https://finance.yahoo.com/)
+[Yahoo Finance Website](https://finance.yahoo.com/)
 
 ## Installation
 
