@@ -52,7 +52,7 @@ class scrape_company_data():
 
         data = html.fromstring(response.text)
 
-        profile_data = data.xpath('//*[@class="D(ib) Va(t)"]/span')
+        profile_data = data.xpath('//*[@class="Mb(25px)"]/p[2]/span')
 
         profile_data_str = [profile.text_content() for profile in profile_data]
 
@@ -113,6 +113,31 @@ class scrape_company_data():
         print('Balance Sheet Data Scraped')
 
         return balance_sheet_df
+    
+    def scrape_cash_flow_data(self):
+        balance_sheet_url = f'https://finance.yahoo.com/quote/{self.stock}/cash-flow'
+
+        payload = {'p' : self.stock}
+
+        response = requests.get(balance_sheet_url, params=payload)
+
+        data = html.fromstring(response.text)
+
+        cash_flow_headers = data.xpath('//div[@class="D(tbhg)"]/div[1]/div')
+
+        cash_flow_data = data.xpath('//div[@data-test="fin-row"]/div[1]/div')
+
+        header_row = [header.text_content() for header in cash_flow_headers]
+
+        data_uf = [data.text_content() for data in cash_flow_data]
+
+        data_array = [data_uf[6*i:6*i+6] for i in range(0,math.ceil(len(data_uf)/6))]
+
+        cash_flow_df = pd.DataFrame(data_array, columns=header_row)
+
+        print('Cash Flow Data Scraped')
+
+        return cash_flow_df
     
 
         

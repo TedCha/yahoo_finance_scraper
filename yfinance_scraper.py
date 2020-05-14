@@ -20,6 +20,8 @@ def main():
 
     balance_sheet = run.scrape_balance_sheet_data()
 
+    cash_flow = run.scrape_cash_flow_data()
+
     file_name = './output/' + f'{stock}_financial_report.xlsx'
 
     writer = pd.ExcelWriter(file_name, engine='xlsxwriter')
@@ -31,6 +33,8 @@ def main():
     income_statement.to_excel(writer, sheet_name='Income_Statement', index=False)
 
     balance_sheet.to_excel(writer, sheet_name='Balance_Sheet', index=False)
+
+    cash_flow.to_excel(writer, sheet_name='Cash_Flow', index=False)
 
     writer.save()
 
