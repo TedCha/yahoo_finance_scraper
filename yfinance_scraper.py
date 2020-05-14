@@ -1,6 +1,5 @@
 import pandas as pd
 import sys
-import xlsxwriter
 import time
 
 from application import scrape_company_data, application_methods
@@ -9,9 +8,15 @@ def main():
 
     print('Once the window opens, please load the stock ticker file.')
 
-    time.sleep(2)
+    time.sleep(1)
 
     stocks = application_methods.load_input_data()
+
+    print('Once the window opens, please load the output directory.')
+
+    time.sleep(1)
+
+    output_directory = application_methods.select_output_directory()
 
     headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64; rv:77.0) Gecko/20100101 Firefox/77.0'}
 
@@ -35,27 +40,19 @@ def main():
 
         cash_flow = run.scrape_cash_flow_data()
 
+        valuation_measures = run.scrape_valuation_measures_data()
+
         # --- Record Data to XLSX --- #
 
-        file_name = './output/' + f'{stock}_financial_report.xlsx'
+        application_methods.write_xlsx_file(stock, 
+        output_directory, 
+        summary_data, profile_data, 
+        income_statement, 
+        balance_sheet, 
+        cash_flow, 
+        valuation_measures)
 
-        writer = pd.ExcelWriter(file_name, engine='xlsxwriter')
-
-        summary_data.to_excel(writer, sheet_name='Summary', header=False)
-
-        profile_data.to_excel(writer, sheet_name='Profile', index=False, header=False)
-
-        income_statement.to_excel(writer, sheet_name='Income_Statement', index=False)
-
-        balance_sheet.to_excel(writer, sheet_name='Balance_Sheet', index=False)
-
-        cash_flow.to_excel(writer, sheet_name='Cash_Flow', index=False)
-
-        # --- Save Data --- #
-
-        writer.save()
-
-        print(stock + ': All Data Scrapped')
+        print(stock + ' Report Written')
         print('------------------------------------')
 
         time.sleep(2)

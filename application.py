@@ -1,6 +1,7 @@
 import requests
 from lxml import html
 import pandas as pd
+import xlsxwriter
 import math
 from tkinter import filedialog, Tk
 
@@ -12,7 +13,6 @@ class scrape_company_data():
     def __init__(self, stock, user_agent):
         self.stock = stock
         self.user_agent = user_agent
-
 
     # --- Scrape Company Summary Data --- #
 
@@ -166,15 +166,51 @@ class scrape_company_data():
         return cash_flow_df
 
 
-class application_methods:
+    # --- Scrape Company Statistics Data --- #
 
+    def scrape_valuation_measures_data(self):
+
+        statistics_url = f'https://finance.yahoo.com/quote/{self.stock}/key-statistics'
+
+        payload = {'p' : self.stock}
+
+        response = requests.get(statistics_url, params=payload, headers=self.user_agent)
+
+        data = html.fromstring(response.text)
+
+        valuation_measures_headers = data.xpath('//*[@class="Bdtw(0px) C($primaryColor)"]/th/span')
+    
+        valuation_measures_data = data.xpath('//*[@class="W(100%) Bdcl(c)  M(0) Whs(n) BdEnd Bdc($seperatorColor) D(itb)"]/tbody/tr/td')
+
+        header_row = [header.text_content() for header in valuation_measures_headers]
+
+        data_uf = [data.text_content() for data in valuation_measures_data]
+
+        header_row.pop(0)
+
+        header_row.insert(0, 'Measure')
+
+        header_row.insert(1, 'Current')
+
+        j = len(valuation_measures_headers) + 1
+
+        data_array = [data_uf[j*i:j*i+j] for i in range(0,math.ceil(len(data_uf)/j))]
+
+        valuation_measures_df = pd.DataFrame(data_array, columns=header_row)
+
+        print(self.stock + ' Valuation Measures Data Scraped')
+
+        return valuation_measures_df
+
+
+class application_methods:
 
     @staticmethod
     def load_input_data():
         root = Tk()
         root.attributes("-topmost", True)
         root.withdraw()
-        file_name = filedialog.askopenfilename()
+        file_name = filedialog.askopenfilename(title='Select Input File')
 
         with open(file_name, 'r', encoding='utf8') as f:
             stocks = [line.strip() for line in f]
@@ -182,6 +218,46 @@ class application_methods:
         root.destroy()
         
         return stocks
+    
+    @staticmethod
+    def select_output_directory():
+        root = Tk()
+        root.attributes("-topmost", True)
+        root.withdraw()
+        directory_path = filedialog.askdirectory(title='Select Output Folder')
+
+        return directory_path
+    
+    @staticmethod
+    def write_xlsx_file(stock,
+    output_directory,
+    summary_data, 
+    profile_data, 
+    income_statement,
+    balance_sheet, 
+    cash_flow, 
+    valuation_measures):
+
+        file_name = output_directory + f'/{stock}_financial_report.xlsx'
+
+        writer = pd.ExcelWriter(file_name, engine='xlsxwriter')
+
+        summary_data.to_excel(writer, sheet_name='Summary', header=False)
+
+        profile_data.to_excel(writer, sheet_name='Profile', index=False, header=False)
+
+        income_statement.to_excel(writer, sheet_name='Income_Statement', index=False)
+
+        balance_sheet.to_excel(writer, sheet_name='Balance_Sheet', index=False)
+
+        cash_flow.to_excel(writer, sheet_name='Cash_Flow', index=False)
+
+        valuation_measures.to_excel(writer, sheet_name='Valuation_Measures', index=False)
+
+        # --- Save Data --- #
+
+        writer.save()
+
 
     
 

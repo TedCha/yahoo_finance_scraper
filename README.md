@@ -1,5 +1,5 @@
 # yahoo_finance_data_scrape
-Python application that allows you to pass in a file that has stock tickers on each line and receive an XLSX output for each company that includes Summary, Profile, Income Statement, Balance Sheet, and Cash Flow data.
+Python application that allows you to pass in a file that has stock tickers on each line and receive an XLSX output for each company that includes Summary, Profile, Income_Statement, Balance_Sheet, Cash_Flow, and Valuation_Measures data.
 
 The data is scraped from:
 
@@ -54,15 +54,9 @@ CSCO
 VZ
 ```
 
-When the script is finished, all of the workbooks will be written in the /output directory as an .xlsx file.
+Next, the script will ask for a output directory. This is where the script will write each output xlsx file.
 
-Directory:
-
-```text
-./yahoo_finance_data_scrape/output 
-```
-
-The output workbook for each stock will contain five sheets: Summary, Profile, Income_Statement, Balance_Sheet, and Cash_Flow.
+The output workbook for each stock will contain six sheets: Summary, Profile, Income_Statement, Balance_Sheet, Cash_Flow, and Valuation_Measures.
 
 ## Author
 
