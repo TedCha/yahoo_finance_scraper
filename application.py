@@ -178,6 +178,8 @@ class application_methods:
 
         with open(file_name, 'r', encoding='utf8') as f:
             stocks = [line.strip() for line in f]
+
+        root.destroy()
         
         return stocks
 
