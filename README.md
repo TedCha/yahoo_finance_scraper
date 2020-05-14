@@ -56,6 +56,8 @@ VZ
 
 Next, the script will ask for a output directory. This is where the script will write each output xlsx file.
 
+## Output
+
 The output workbook for each stock will contain six sheets: Summary, Profile, Income_Statement, Balance_Sheet, Cash_Flow, and Valuation_Measures.
 
 ## Author
