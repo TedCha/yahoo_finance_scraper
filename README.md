@@ -35,7 +35,13 @@ python yfinance_scraper.py
 
 The script will ask for a stock ticker (the abbreviated stock name for the company).
 
-After inputting the stock ticker, the script will scrape the data and write it to a .xlsx file and store it in the ./yahoo_finance_data_scrape/output directory with the stock symbol as part of the naming convention.
+After inputting the stock ticker, the script will scrape the data and write it to a .xlsx file and store it in the output directory with the stock symbol as part of the naming convention.
+
+Directory:
+
+```bash
+./yahoo_finance_data_scrape/output 
+```
 
 The workbook will contain five sheets: Summary, Profile, Income_Statement, Balance_Sheet, and Cash_Flow.
 
