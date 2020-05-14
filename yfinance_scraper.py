@@ -1,7 +1,4 @@
-import requests
-from lxml import html
 import pandas as pd
-import math
 import sys
 import xlsxwriter
 
