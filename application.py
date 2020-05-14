@@ -39,6 +39,8 @@ class scrape_company_data():
 
         summary_data_df = df_i.transpose()
 
+        print('Financial Summary Data Scraped')
+
         return summary_data_df
 
     def scrape_profile_data(self):
@@ -57,6 +59,8 @@ class scrape_company_data():
         df_i = pd.DataFrame([profile_data_str[0::2], profile_data_str[1::2]])
 
         profile_data_df = df_i.transpose()
+
+        print('Company Profile Data Scraped')
 
         return profile_data_df
     
@@ -81,8 +85,34 @@ class scrape_company_data():
 
         income_statement_df = pd.DataFrame(data_array, columns=header_row)
 
+        print('Income Statement Data Scraped')
+
         return income_statement_df
 
+    def scrape_balance_sheet_data(self):
+        balance_sheet_url = f'https://finance.yahoo.com/quote/{self.stock}/balance-sheet'
+
+        payload = {'p' : self.stock}
+
+        response = requests.get(balance_sheet_url, params=payload)
+
+        data = html.fromstring(response.text)
+
+        balance_sheet_headers = data.xpath('//div[@class="D(tbhg)"]/div[1]/div')
+
+        balance_sheet_data = data.xpath('//div[@data-test="fin-row"]/div[1]/div')
+
+        header_row = [header.text_content() for header in balance_sheet_headers]
+
+        data_uf = [data.text_content() for data in balance_sheet_data]
+
+        data_array = [data_uf[5*i:5*i+5] for i in range(0,math.ceil(len(data_uf)/5))]
+
+        balance_sheet_df = pd.DataFrame(data_array, columns=header_row)
+
+        print('Balance Sheet Data Scraped')
+
+        return balance_sheet_df
     
 
         

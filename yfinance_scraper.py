@@ -8,7 +8,7 @@ import xlsxwriter
 from application import scrape_company_data
 
 def main():
-    stock = str(sys.argv[1])
+    stock = str(input('Stock Symbol: '))
 
     run = scrape_company_data(stock)
 
@@ -18,7 +18,9 @@ def main():
 
     income_statement = run.scrape_income_statement_data()
 
-    file_name = './output/' + f'{stock} financial_report.xlsx'
+    balance_sheet = run.scrape_balance_sheet_data()
+
+    file_name = './output/' + f'{stock}_financial_report.xlsx'
 
     writer = pd.ExcelWriter(file_name, engine='xlsxwriter')
 
@@ -26,7 +28,9 @@ def main():
 
     profile_data.to_excel(writer, sheet_name='Profile', index=False, header=False)
 
-    income_statement.to_excel(writer, sheet_name='Income Statement', index=False)
+    income_statement.to_excel(writer, sheet_name='Income_Statement', index=False)
+
+    balance_sheet.to_excel(writer, sheet_name='Balance_Sheet', index=False)
 
     writer.save()
 
