@@ -2,9 +2,10 @@ import requests
 from lxml import html
 import pandas as pd
 import math
+from tkinter import filedialog, Tk
 
 class scrape_company_data():
-    
+
 
     # --- Initialize Instance Variables --- #
 
@@ -46,7 +47,7 @@ class scrape_company_data():
 
         summary_data_df = df_i.transpose()
 
-        print('Financial Summary Data Scraped')
+        print(self.stock + ' Financial Summary Data Scraped')
 
         return summary_data_df
 
@@ -70,7 +71,7 @@ class scrape_company_data():
 
         profile_data_df = df_i.transpose()
 
-        print('Company Profile Data Scraped')
+        print(self.stock + ' Company Profile Data Scraped')
 
         return profile_data_df
 
@@ -94,11 +95,13 @@ class scrape_company_data():
 
         data_uf = [data.text_content() for data in income_statement_rows]
 
-        data_array = [data_uf[6*i:6*i+6] for i in range(0,math.ceil(len(data_uf)/6))]
+        j = len(data.xpath('//*[@class="D(tbr) C($primaryColor)"]/div'))
+
+        data_array = [data_uf[j*i:j*i+j] for i in range(0,math.ceil(len(data_uf)/j))]
 
         income_statement_df = pd.DataFrame(data_array, columns=header_row)
 
-        print('Income Statement Data Scraped')
+        print(self.stock + ' Income Statement Data Scraped')
 
         return income_statement_df
 
@@ -122,11 +125,13 @@ class scrape_company_data():
 
         data_uf = [data.text_content() for data in balance_sheet_data]
 
-        data_array = [data_uf[5*i:5*i+5] for i in range(0,math.ceil(len(data_uf)/5))]
+        j = len(data.xpath('//*[@class="D(tbr) C($primaryColor)"]/div'))
+
+        data_array = [data_uf[j*i:j*i+j] for i in range(0,math.ceil(len(data_uf)/j))]
 
         balance_sheet_df = pd.DataFrame(data_array, columns=header_row)
 
-        print('Balance Sheet Data Scraped')
+        print(self.stock + ' Balance Sheet Data Scraped')
 
         return balance_sheet_df
 
@@ -150,13 +155,32 @@ class scrape_company_data():
 
         data_uf = [data.text_content() for data in cash_flow_data]
 
-        data_array = [data_uf[6*i:6*i+6] for i in range(0,math.ceil(len(data_uf)/6))]
+        j = len(data.xpath('//*[@class="D(tbr) C($primaryColor)"]/div'))
+
+        data_array = [data_uf[j*i:j*i+j] for i in range(0,math.ceil(len(data_uf)/j))]
 
         cash_flow_df = pd.DataFrame(data_array, columns=header_row)
 
-        print('Cash Flow Data Scraped')
+        print(self.stock + ' Cash Flow Data Scraped')
 
         return cash_flow_df
+
+
+class application_methods:
+
+
+    @staticmethod
+    def load_input_data():
+        root = Tk()
+        root.attributes("-topmost", True)
+        root.withdraw()
+        file_name = filedialog.askopenfilename()
+
+        with open(file_name, 'r', encoding='utf8') as f:
+            stocks = [line.strip() for line in f]
+        
+        return stocks
+
     
 
         
