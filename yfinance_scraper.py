@@ -8,6 +8,9 @@ import xlsxwriter
 from application import scrape_company_data
 
 def main():
+
+    # --- Call scraping functions and perform web scrape. --- #
+
     stock = str(input('Stock Symbol: '))
 
     run = scrape_company_data(stock)
@@ -21,6 +24,8 @@ def main():
     balance_sheet = run.scrape_balance_sheet_data()
 
     cash_flow = run.scrape_cash_flow_data()
+
+    # --- Write scraped data to xlsx file. --- #
 
     file_name = './output/' + f'{stock}_financial_report.xlsx'
 
