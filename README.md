@@ -1,5 +1,5 @@
 # yahoo_finance_data_scrape
-Python application that allows you to pass a stock symbol and receive an XLSX output of all the data scraped.
+Python application that allows you to pass a stock ticker and receive an XLSX output of all the data scraped.
 
 The data is scraped from:
 
