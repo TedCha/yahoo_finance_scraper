@@ -42,7 +42,7 @@ def main():
 
         valuation_measures = run.scrape_valuation_measures_data()
 
-        # --- Record Data to XLSX --- #
+        # --- Record Data to XLSX File --- #
 
         application_methods.write_xlsx_file(stock, 
         output_directory, 
