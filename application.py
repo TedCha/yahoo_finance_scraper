@@ -219,13 +219,44 @@ class scrape_company_data():
 
         financial_highlights_data = data.xpath('//*[@class="Mb(10px) Pend(20px) smartphone_Pend(0px)"]/div')
 
-        trading_data_labels_uf = [data.xpath('./div/div/table//span/text()') for data in trading_information_data]
+        trading_data_labels_uf = [data.xpath('./div/div/table//tr/td[1]/span/text()') for data in trading_information_data]
 
-        trading_data_uf = [data.xpath('.//*[@class="W(100%) Bdcl(c) "]/tbody/tr/td[2]/text()') for data in trading_information_data]
+        trading_data_uf = [data.xpath('.//*[@class="W(100%) Bdcl(c) "]/tbody/tr/td[2]/descendant-or-self::text()') for data in trading_information_data]
 
-        financial_data_labels_uf = [data.xpath('./div/div/table//span/text()') for data in financial_highlights_data]
+        financial_data_labels_uf = [data.xpath('./div/div/table//tr/td[1]/span/text()') for data in financial_highlights_data]
 
-        financial_data_uf = [data.xpath('.//*[@class="W(100%) Bdcl(c) "]/tbody/tr/td[2]/text()') for data in financial_highlights_data]
+        # Forgive me for this abomination of code you're about to witness
+        for i in range(len(financial_data_labels_uf)):
+
+            if i == 1:
+                financial_data_labels_uf[i][1] += ' (ttm)'
+
+            elif i == 2:
+                financial_data_labels_uf[i][0] += ' (ttm)'
+                financial_data_labels_uf[i][1] += ' (ttm)'
+
+            elif i == 3:
+                financial_data_labels_uf[i][0] += ' (ttm)'
+                financial_data_labels_uf[i][1] += ' (ttm)'
+                financial_data_labels_uf[i][2] += ' (yoy)'
+                financial_data_labels_uf[i][3] += ' (ttm)'
+                financial_data_labels_uf[i][5] += ' (ttm)'
+                financial_data_labels_uf[i][6] += ' (ttm)'
+                financial_data_labels_uf[i][7] += ' (yoy)'
+
+            elif i == 4:
+                financial_data_labels_uf[i][0] += ' (mrq)'
+                financial_data_labels_uf[i][1] += ' (mrq)'
+                financial_data_labels_uf[i][2] += ' (mrq)'
+                financial_data_labels_uf[i][3] += ' (mrq)'
+                financial_data_labels_uf[i][4] += ' (mrq)'
+                financial_data_labels_uf[i][5] += ' (mrq)'
+
+            elif i == 5:
+                financial_data_labels_uf[i][0] += ' (ttm)'
+                financial_data_labels_uf[i][1] += ' (ttm)'
+
+        financial_data_uf = [data.xpath('.//*[@class="W(100%) Bdcl(c) "]/tbody/tr/td[2]/descendant-or-self::text()') for data in financial_highlights_data]
 
         merged_trading_data = list(zip(chain.from_iterable(trading_data_labels_uf), chain.from_iterable(trading_data_uf)))
         merged_financial_data = list(zip(chain.from_iterable(financial_data_labels_uf), chain.from_iterable(financial_data_uf)))

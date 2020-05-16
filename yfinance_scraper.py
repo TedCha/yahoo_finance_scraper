@@ -12,7 +12,7 @@ def main():
 
     stocks = application_methods.load_input_data()
 
-    print('Once the window opens, please load the output directory.')
+    print('Once the window opens, please load the output directory.\n')
 
     time.sleep(1)
 
