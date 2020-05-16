@@ -42,6 +42,12 @@ def main():
 
         valuation_measures = run.scrape_valuation_measures_data()
 
+        misc_data = run.scrape_highlights_and_trading_data()
+
+        highlight_data = misc_data['financial']
+
+        trading_data = misc_data['trading']
+
         # --- Record Data to XLSX File --- #
 
         application_methods.write_xlsx_file(stock, 
@@ -50,7 +56,9 @@ def main():
         income_statement, 
         balance_sheet, 
         cash_flow, 
-        valuation_measures)
+        valuation_measures,
+        highlight_data,
+        trading_data)
 
         print(stock + ' Report Written')
         print('------------------------------------')

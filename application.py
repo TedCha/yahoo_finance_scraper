@@ -4,6 +4,7 @@ import pandas as pd
 import xlsxwriter
 import math
 from tkinter import filedialog, Tk
+from itertools import chain
 
 class scrape_company_data():
 
@@ -201,6 +202,41 @@ class scrape_company_data():
         print(self.stock + ' Valuation Measures Data Scraped')
 
         return valuation_measures_df
+    
+    # --- Scrape Financial Highlights and Trading Data --- #
+
+    def scrape_highlights_and_trading_data(self):
+
+        statistics_url = f'https://finance.yahoo.com/quote/{self.stock}/key-statistics'
+
+        payload = {'p' : self.stock}
+
+        response = requests.get(statistics_url, params=payload, headers=self.user_agent)
+
+        data = html.fromstring(response.text)
+
+        trading_information_data = data.xpath('//*[@class="Pstart(20px) smartphone_Pstart(0px)"]/div')
+
+        financial_highlights_data = data.xpath('//*[@class="Mb(10px) Pend(20px) smartphone_Pend(0px)"]/div')
+
+        trading_data_labels_uf = [data.xpath('./div/div/table//span/text()') for data in trading_information_data]
+
+        trading_data_uf = [data.xpath('.//*[@class="W(100%) Bdcl(c) "]/tbody/tr/td[2]/text()') for data in trading_information_data]
+
+        financial_data_labels_uf = [data.xpath('./div/div/table//span/text()') for data in financial_highlights_data]
+
+        financial_data_uf = [data.xpath('.//*[@class="W(100%) Bdcl(c) "]/tbody/tr/td[2]/text()') for data in financial_highlights_data]
+
+        merged_trading_data = list(zip(chain.from_iterable(trading_data_labels_uf), chain.from_iterable(trading_data_uf)))
+        merged_financial_data = list(zip(chain.from_iterable(financial_data_labels_uf), chain.from_iterable(financial_data_uf)))
+
+        trading_data_df = pd.DataFrame(merged_trading_data)
+
+        financial_data_df = pd.DataFrame(merged_financial_data)
+
+        print(self.stock + ' Highlights and Trading Data Scraped')
+
+        return {'trading': trading_data_df, 'financial': financial_data_df}
 
 
 class application_methods:
@@ -236,7 +272,9 @@ class application_methods:
     income_statement,
     balance_sheet, 
     cash_flow, 
-    valuation_measures):
+    valuation_measures,
+    highlight_data,
+    trading_data):
 
         file_name = output_directory + f'/{stock}_financial_report.xlsx'
 
@@ -253,6 +291,10 @@ class application_methods:
         cash_flow.to_excel(writer, sheet_name='Cash_Flow', index=False)
 
         valuation_measures.to_excel(writer, sheet_name='Valuation_Measures', index=False)
+
+        highlight_data.to_excel(writer, sheet_name='Financial_Highlights', index=False, header=False)
+
+        trading_data.to_excel(writer, sheet_name='Trading_Information', index=False, header=False)
 
         # --- Save Data --- #
 
