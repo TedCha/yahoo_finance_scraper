@@ -276,7 +276,7 @@ class application_methods:
     highlight_data,
     trading_data):
 
-        file_name = output_directory + f'/{stock}_financial_report.xlsx'
+        file_name = output_directory + f'/{stock}_financial_data.xlsx'
 
         writer = pd.ExcelWriter(file_name, engine='xlsxwriter')
 
