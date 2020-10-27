@@ -31,21 +31,14 @@ def main():
         # --- Scrape Methods Execution --- #
 
         summary_data = run.scrape_summary_data()
-
         profile_data = run.scrape_profile_data()
-
         income_statement = run.scrape_income_statement_data()
-
         balance_sheet = run.scrape_balance_sheet_data()
-
         cash_flow = run.scrape_cash_flow_data()
-
         valuation_measures = run.scrape_valuation_measures_data()
 
         misc_data = run.scrape_highlights_and_trading_data()
-
         highlight_data = misc_data['financial']
-
         trading_data = misc_data['trading']
 
         # --- Record Data to XLSX File --- #
